@@ -5,7 +5,7 @@ import LatestJobs from "@/components/LatestJobs";
 import Button from "@/components/Button";
 import BookmarkAlert from "@/components/BookmarkAlert";
 
-export default function Home() {
+export default function App() {
   return (
     <div className="relative max-w-[73.75rem] mx-auto flex flex-col items-center justify-center gap-[2rem] overflow-x-hidden mb-[2rem] px-[1rem]">
       <BookmarkAlert />
