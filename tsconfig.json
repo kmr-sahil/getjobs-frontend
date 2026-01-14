@@ -15,23 +15,32 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "baseUrl": ".",  // Add this line
-    "paths": {        // Add this block
-      "@/*": ["src/*"]
-    }
+    "baseUrl": ".", // Add this line
+    "paths": { // Add this block
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "src/app/pay/PoTI8RZDB76ZyV/page.jsx", "src/app/(auth)/forgotpassword/page.jsx", "src/app/sitemap.js", "src/app/sitemap.js/routes.js", "src/app/company/[id]/page.jsx"  ],
+    "**/*.tsx",
+    "src/app/pay/PoTI8RZDB76ZyV/page.jsx",
+    "src/app/(auth)/forgotpassword/page.jsx",
+    "src/app/sitemap.js",
+    "src/app/sitemap.js/routes.js",
+    "src/app/company/[id]/page.jsx",
+    ".next/dev/types/**/*.ts"
+  ],
   "exclude": [
     "node_modules"
   ]

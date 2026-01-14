@@ -13,13 +13,15 @@ function JobCard({
 }) {
   return (
     <div className="w-[100%] flex justify-between items-center px-[8px] sm:px-[24px] py-[8px] sm:py-[1rem] rounded-[12px] hover:bg-background hover:bg-opacity-50">
-     <Link
-  href={`/job/${(jobTitle || "")
-    .replace(/\s+/g, "-")
-    .toLowerCase()}-${(companyName || "").replace(/\s+/g, "-").toLowerCase()}-${id || ""}`}
-  target="_blank"
-  className="flex flex-grow items-center justify-start gap-[1rem]"
->
+      <Link
+        href={`/job/${(jobTitle || "").replace(/\s+/g, "-").toLowerCase()}-${(
+          companyName || ""
+        )
+          .replace(/\s+/g, "-")
+          .toLowerCase()}-${id || ""}`}
+        target="_blank"
+        className="flex flex-grow items-center justify-start gap-[1rem]"
+      >
         <div className="w-8 h-8 sm:w-14 sm:h-14 bg-primary/10 rounded-[4px] overflow-hidden flex-shrink-0">
           {img ? (
             <img

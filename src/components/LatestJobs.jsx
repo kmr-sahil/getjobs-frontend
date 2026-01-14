@@ -10,29 +10,25 @@ export default async function LatestJobs() {
   const baseApiUrl = `${process.env.NEXT_PUBLIC_BACK_MAIN}/api/v1/job/list?search=&loc=&remote=&commitment=&level=&page=1`;
 
   try {
-    // Fetch jobs for each category
     const jobPromises = categories.map(({ category }) =>
       fetch(`${baseApiUrl}&categories=${category}`, {
-        next: {
-          revalidate: 36000,
-        },
-      }).then((response) => {
-        if (!response.ok) {
-          throw new Error(`Failed to fetch jobs for category: ${category}`);
+        next: { revalidate: 1000 },
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch ${category}`);
         }
-        return response.json();
+        return res.json();
       })
     );
 
-    // Wait for all API calls to complete
     const jobData = await Promise.all(jobPromises);
 
     return (
       <div className="w-full flex flex-col gap-8">
-        {/* Latest Jobs Section */}
+        {/* Latest Jobs (Tech) */}
         <section>
           <h2 className="text-xl font-medium mb-4">Latest Jobs</h2>
-          <div className="flex flex-col justify-center items-center gap-4">
+          <div className="flex flex-col items-center gap-4">
             {jobData[0]?.all?.map((job) => (
               <JobCard
                 key={job.id}
@@ -50,11 +46,11 @@ export default async function LatestJobs() {
         </section>
 
         {/* Other Categories */}
-        {categories.map(({ name, category }, index) => (
+        {categories.slice(1).map(({ name, category }, index) => (
           <section key={category}>
             <h2 className="text-xl font-medium mb-4">{name}</h2>
-            <div className="flex flex-col justify-center items-center gap-4">
-              {jobData[index]?.all?.map((job) => (
+            <div className="flex flex-col items-center gap-4">
+              {jobData[index + 1]?.all?.map((job) => (
                 <JobCard
                   key={job.id}
                   id={job.id}
@@ -73,10 +69,12 @@ export default async function LatestJobs() {
       </div>
     );
   } catch (error) {
-    console.error("Error fetching jobs:", error);
+    console.error(error);
     return (
-      <div className="w-full flex flex-col justify-center items-center gap-4">
-        <p className="text-lg text-red-500">Failed to load jobs. Please try again later.</p>
+      <div className="w-full flex justify-center items-center">
+        <p className="text-lg text-red-500">
+          Failed to load jobs. Please try again later.
+        </p>
       </div>
     );
   }
