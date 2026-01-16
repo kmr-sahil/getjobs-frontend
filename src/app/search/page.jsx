@@ -2,7 +2,6 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, usePathname } from "next/navigation"; // Import useSearchParams and usePathname
 import axios from "axios";
-import Navbar from "@/components/Navbar";
 import Search from "@/components/Search";
 import JobCard from "@/components/JobCard";
 import useDebounce from "@/hooks/useDebounce";

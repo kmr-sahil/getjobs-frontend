@@ -15,7 +15,7 @@ export default async function sitemap() {
       { url: "/dashboard", priority: 0.8 },
       { url: "/contact", priority: 0.8 },
       { url: "/postjob", priority: 0.8 },
-      { url: "/search", priority: 0.8 },
+      //{ url: "/search", priority: 0.8 },
       { url: "/about-us", priority: 0.8 },
       { url: "/privacy-policy", priority: 0.8 },
       { url: "/business", priority: 0.8 },

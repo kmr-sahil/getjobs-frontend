@@ -12,7 +12,7 @@ export default async function LatestJobs() {
   try {
     const jobPromises = categories.map(({ category }) =>
       fetch(`${baseApiUrl}&categories=${category}`, {
-        next: { revalidate: 1000 },
+        next: { revalidate: 3600000 },
       }).then((res) => {
         if (!res.ok) {
           throw new Error(`Failed to fetch ${category}`);
