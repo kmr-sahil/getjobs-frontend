@@ -12,7 +12,7 @@ export default function Page() {
     <Suspense fallback={<Loader />}>
       <JobSearchComponent />
     </Suspense>
-  );
+  ); 
 }
 
 function JobSearchComponent() {

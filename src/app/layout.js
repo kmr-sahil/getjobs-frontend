@@ -7,10 +7,10 @@ import { AuthProvider } from "./provider";
 import Navbar from "@/components/Navbar";
 import HelpComponent from "@/components/HelpModal";
 import Footer from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// ✅ Define metadata for SEO (Next.js 13+ App Router)
 export const metadata = {
   title:
     "GetJobs.today | Find Remote, Onsite, Tech, Design, Marketing Jobs and More",
@@ -46,6 +46,7 @@ export default function RootLayout({ children }) {
               <Toaster />
               <Navbar />
               {children}
+              <Analytics />
               <HelpComponent />
             </div>
             <Footer />
