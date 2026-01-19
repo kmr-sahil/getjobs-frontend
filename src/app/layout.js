@@ -1,7 +1,6 @@
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { GoogleTagManager } from "@next/third-parties/google";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./provider";
 import Navbar from "@/components/Navbar";

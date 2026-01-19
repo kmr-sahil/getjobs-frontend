@@ -19,7 +19,7 @@ export default async function sitemap() {
       { url: "/about-us", priority: 0.8 },
       { url: "/privacy-policy", priority: 0.8 },
       { url: "/business", priority: 0.8 },
-      { url: "/companies", priority: 0.8 },
+      { url: "/company", priority: 0.8 },
       { url: "/pricing", priority: 0.8 },
       { url: "/terms-of-service", priority: 0.8 },
       { url: "/cancellation-refund-policy", priority: 0.8 },

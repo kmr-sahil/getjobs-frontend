@@ -1,80 +1,120 @@
 "use client";
-import React, { useState, useEffect, Suspense } from "react";
-import { useSearchParams, usePathname } from "next/navigation"; // Import useSearchParams and usePathname
+
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Search from "@/components/Search";
 import JobCard from "@/components/JobCard";
 import useDebounce from "@/hooks/useDebounce";
 import Loader from "@/components/Loader";
+import { Suspense } from "react";
 
 export default function Page() {
   return (
-    <Suspense fallback={<Loader />}>
-      <JobSearchComponent />
+    <Suspense
+      fallback={
+        <div>
+          <Loader />
+        </div>
+      }
+    >
+      <SearchPageClient />
     </Suspense>
-  ); 
+  );
 }
 
-function JobSearchComponent() {
-  const searchParams = useSearchParams(); // Use useSearchParams to read query params
-  const pathname = usePathname(); // Use usePathname to get the current path
+function SearchPageClient() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const [load, setLoad] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [search, setSearch] = useState(searchParams.get("search") || ""); // Initialize from query params
-  const [loc, setLoc] = useState(searchParams.get("loc") || ""); // Initialize from query params
+
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [loc, setLoc] = useState(searchParams.get("loc") || "");
   const [page, setPage] = useState(1);
-  const [searchChanged, setSearchChanged] = useState(false);
-  const [remote, setRemote] = useState(
-    searchParams.get("remote") === "true" || false
-  ); // Initialize from query params
+
+  const [remote, setRemote] = useState(searchParams.get("remote") === "true");
+
   const [filters, setFilters] = useState({
     level: searchParams.get("level") || "",
     commitment: searchParams.get("commitment") || "",
     categories: searchParams.get("categories") || "",
   });
-  const debouncedSearchTerm = useDebounce(search, 500);
+
+  const debouncedSearch = useDebounce(search, 500);
   const debouncedLoc = useDebounce(loc, 500);
 
-  useEffect(() => {
-    // Update the URL with query parameters manually
-    const params = new URLSearchParams({
-      search: debouncedSearchTerm || "",
-      loc: debouncedLoc || "",
-      remote: remote || "",
-      commitment: filters.commitment || "",
-      level: filters.level || "",
-      categories: filters.categories || "",
-      page: page || 1,
+  const buildQueryParams = (params) => {
+    const searchParams = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+      if (
+        value !== "" &&
+        value !== null &&
+        value !== undefined &&
+        value !== false
+      ) {
+        searchParams.set(key, String(value));
+      }
     });
-    window.history.replaceState(null, "", `${pathname}?${params}`);
-  }, [debouncedSearchTerm, debouncedLoc, remote, filters, page, pathname]);
+
+    return searchParams.toString();
+  };
 
   useEffect(() => {
-    async function getJob() {
+    const params = buildQueryParams({
+      page,
+      search: debouncedSearch,
+      loc: debouncedLoc,
+      remote,
+      commitment: filters.commitment,
+      level: filters.level,
+      categories: filters.categories,
+    });
+
+    router.replace(`?${params}`, { scroll: false });
+  }, [debouncedSearch, debouncedLoc, remote, filters, page]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function getJobs() {
       try {
         setLoad(true);
+
         const { level, commitment, categories } = filters;
-        const url = `${process.env.NEXT_PUBLIC_BACK_MAIN}/api/v1/job/list?page=${page}&search=${debouncedSearchTerm}&loc=${debouncedLoc}&remote=${remote}&commitment=${commitment}&level=${level}&categories=${categories}`;
-        const response = await axios.get(url);
-        setPosts((prevPosts) => [...prevPosts, ...response.data.all]);
-      } catch (error) {
-        console.log(error);
+
+        const url = `${process.env.NEXT_PUBLIC_BACK_MAIN}/api/v1/job/list?page=${page}&search=${debouncedSearch}&loc=${debouncedLoc}&remote=${remote ? "true" : "false"}&commitment=${commitment}&level=${level}&categories=${categories}`;
+
+        const response = await axios.get(url, {
+          signal: controller.signal,
+        });
+
+        setPosts((prev) =>
+          page === 1 ? response.data.all : [...prev, ...response.data.all],
+        );
+      } catch (err) {
+        if (err.name !== "CanceledError") {
+          console.error(err);
+        }
       } finally {
         setLoad(false);
       }
     }
 
-    getJob();
-  }, [debouncedSearchTerm, debouncedLoc, page, searchChanged, remote, filters]);
+    getJobs();
+
+    return () => controller.abort();
+  }, [debouncedSearch, debouncedLoc, page, remote, filters]);
+
+  const resetPagination = () => {
+    setPage(1);
+    setPosts([]);
+  };
 
   const handleSearchChange = (value) => {
     setSearch(value);
-    resetPagination();
-  };
-
-  const handleRemoteChange = () => {
-    setRemote(!remote);
     resetPagination();
   };
 
@@ -83,25 +123,22 @@ function JobSearchComponent() {
     resetPagination();
   };
 
+  const handleRemoteChange = () => {
+    setRemote((prev) => !prev);
+    resetPagination();
+  };
+
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
     resetPagination();
   };
 
-  const resetPagination = () => {
-    setPage(1);
-    setPosts([]);
-    setSearchChanged(true);
-  };
-
   const handleShowMoreResults = () => {
-    setPage((prevPage) => prevPage + 1);
+    setPage((prev) => prev + 1);
   };
 
   return (
-    <div className="max-w-[73.75rem] mx-auto flex flex-col items-center justify-center gap-[2rem] px-[1rem]">
-  
-
+    <div className="max-w-[73.75rem] min-h-screen mx-auto flex flex-col items-center justify-center gap-[2rem] px-[1rem]">
       <div className="flex flex-col gap-[2rem] sm:px-[20px]">
         <div className="w-[100%] text-center flex flex-col items-center justify-center gap-[1rem]">
           <h1 className="text-[2.5rem] md:text-[4rem] font-light leading-tight">
@@ -139,7 +176,7 @@ function JobSearchComponent() {
             />
           ))
         ) : (
-          <p>{load ? "Loading..." : "No jobs found"}</p>
+          <p>{load ? "Loading..." : ""}</p>
         )}
       </div>
 

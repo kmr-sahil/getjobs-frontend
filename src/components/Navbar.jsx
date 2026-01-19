@@ -44,7 +44,7 @@ export default function Navbar() {
 
       {/* Desktop Navigation */}
       <div className="hidden md:flex items-center gap-4 ">
-        <Link href="/companies" className="bg-background px-4 py-2 rounded-md text-[1.1rem] font-medium">
+        <Link href="/company" className="bg-background px-4 py-2 rounded-md text-[1.1rem] font-medium">
           Companies
         </Link>
         <Link href="/blogs" className="bg-background px-4 py-2 rounded-md text-[1.1rem] font-medium">
@@ -118,7 +118,7 @@ export default function Navbar() {
 
           {/* Sidebar Links */}
           <div className="flex flex-col mt-12 px-6 space-y-4">
-            <Link href="/companies" className="text-lg font-medium" onClick={() => setIsMenuOpen(false)}>
+            <Link href="/company" className="text-lg font-medium" onClick={() => setIsMenuOpen(false)}>
               Companies
             </Link>
             <Link href="/blogs" className="text-lg font-medium" onClick={() => setIsMenuOpen(false)}>
